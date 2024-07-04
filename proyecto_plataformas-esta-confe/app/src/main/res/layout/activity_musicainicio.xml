@@ -33,12 +33,36 @@
         android:layout_marginBottom="250dp"
         android:background="@drawable/discomedio" />
 
-    <Button
+    <ImageButton
+        android:id="@+id/btnRewind"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#3F2E4C"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="200dp"
+        android:layout_toStartOf="@+id/btnPlayPause"
+        android:src="@drawable/retrasar" />
+
+    <ImageButton
         android:id="@+id/btnPlayPause"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/pause"
+        android:background="#3F2E4C"
+        android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="490dp"/>
+        android:layout_marginBottom="200dp"
+        android:src="@drawable/continuar" />
+
+    <ImageButton
+        android:id="@+id/btnFastForward"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="25dp"
+        android:layout_marginBottom="200dp"
+        android:layout_toEndOf="@+id/btnPlayPause"
+        android:background="#3F2E4C"
+        android:src="@drawable/adelantar" />
 
 </RelativeLayout>
