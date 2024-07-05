@@ -14,9 +14,10 @@
 
         <RelativeLayout
             android:id="@+id/relativeLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".MainActivity">
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layout_constraintHeight_default="wrap"
+            app:layout_constraintWidth_default="wrap">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/main_image"
@@ -24,7 +25,7 @@
                 android:layout_height="250dp"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="40dp"
-                android:layout_marginEnd="0dp"
+                android:layout_marginEnd="16dp"
                 android:src="@drawable/main_image_perfil"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:shapeAppearanceOverlay="@style/OvalImageShape" />
@@ -40,9 +41,10 @@
             android:textSize="18sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="@+id/relativeLayout"
-            app:layout_constraintStart_toStartOf="@+id/relativeLayout"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="16dp"/>
 
         <Button
             android:id="@+id/btn_horario"
@@ -56,14 +58,12 @@
             app:layout_constraintTop_toBottomOf="@+id/btn_musica"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.8"
-            android:layout_marginTop="25dp" />
+            android:layout_marginTop="16dp"/>
 
         <Button
             android:id="@+id/btn_voz"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="25dp"
             android:background="@android:color/transparent"
             android:text="VOZ"
             android:textColor="#FFFFFF"
@@ -72,19 +72,18 @@
             app:layout_constraintTop_toBottomOf="@+id/btn_horario"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.5" />
+            android:layout_marginTop="16dp"/>
 
         <ImageView
             android:id="@+id/menu_icon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="345dp"
-            android:layout_marginBottom="260dp"
+            android:layout_marginTop="46dp"
             android:background="@drawable/desplegableinicio"
             android:contentDescription="Menu"
-            app:layout_constraintBottom_toTopOf="@+id/btn_musica"
-            app:layout_constraintEnd_toEndOf="@+id/relativeLayout"
-            android:onClick="openDrawer" />
+            android:onClick="openDrawer"
+            app:layout_constraintStart_toStartOf="@+id/relativeLayout"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
@@ -92,5 +91,12 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        app:menu="@menu/drawer_menu" />
+        app:menu="@menu/drawer_menu" >
+
+        <Switch
+            android:id="@+id/switch1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Switch" />
+    </com.google.android.material.navigation.NavigationView>
 </androidx.drawerlayout.widget.DrawerLayout>
