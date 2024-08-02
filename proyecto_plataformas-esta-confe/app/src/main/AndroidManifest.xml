@@ -2,9 +2,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
 
     <application
         android:allowBackup="true"
@@ -16,9 +19,28 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ProjectHub"
         tools:targetApi="31">
+        <activity
+            android:name=".Perfil_Usuario"
+            android:exported="false" />
+        <activity
+            android:name=".MusicInicioIn"
+            android:exported="false" />
+
+        <service
+            android:name=".MusicService"
+            android:exported="false" />
 
         <activity
-            android:name=".musicainicio"
+            android:name=".logintwo"
+            android:exported="false" />
+        <activity
+            android:name=".DailyActivitiesActivity"
+            android:exported="false" />
+        <activity
+            android:name=".vozinicio"
+            android:exported="false" />
+        <activity
+            android:name=".horarioinicio"
             android:exported="false" />
         <activity
             android:name=".iniciooptions"
@@ -27,16 +49,28 @@
             android:name=".loginusuarios"
             android:exported="false" />
         <activity
+            android:name=".musicainicio"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:exported="true">
+            android:exported="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".RecordingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ModulatorActivity"
+            android:exported="false" />
 
-        <uses-library android:name="org.apache.http.legacy" android:required="false"/>
+        <uses-library
+            android:name="org.apache.http.legacy"
+            android:required="false" />
     </application>
 
 </manifest>

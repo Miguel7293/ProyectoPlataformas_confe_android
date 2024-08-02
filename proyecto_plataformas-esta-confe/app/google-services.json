@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1073070925997",
+    "project_id": "aplicacionaceitunodbp",
+    "storage_bucket": "aplicacionaceitunodbp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1073070925997:android:e4e6a4b3d9cebed4e6be24",
+        "android_client_info": {
+          "package_name": "llusca.migugoty.projecthub"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAz54QHgj9b_RAgtdbXxR0NTIHG9MWQoj4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -23,5 +23,15 @@ class iniciooptions : AppCompatActivity() {
             val intent= Intent(this, musicainicio::class.java)
             startActivity(intent)
         }
+        val button1 = findViewById<Button>(R.id.btn_horario)
+        button1.setOnClickListener {
+            val intent= Intent(this, horarioinicio::class.java)
+            startActivity(intent)
+        }
+        val button2 = findViewById<Button>(R.id.btn_voz)
+        button2.setOnClickListener {
+            val intent= Intent(this, vozinicio::class.java)
+            startActivity(intent)
+        }
     }
 }

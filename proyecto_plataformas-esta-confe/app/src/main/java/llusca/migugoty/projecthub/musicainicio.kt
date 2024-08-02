@@ -1,129 +1,108 @@
 package llusca.migugoty.projecthub
 
-import android.Manifest
-import android.app.Activity
+import android.content.ContentResolver
 import android.content.Intent
-import android.content.pm.ActivityInfo
 import android.content.pm.PackageManager
-import android.media.MediaPlayer
-import android.net.Uri
+import android.database.Cursor
 import android.os.Bundle
-import android.widget.Button
-import android.widget.ImageButton
-import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
+import android.provider.MediaStore
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.Manifest
+import android.util.Log
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 
 class musicainicio : AppCompatActivity() {
 
-    private lateinit var btnSelectSong: Button
-    private lateinit var btnPlayPause: ImageButton
-    private lateinit var btnFastForward: ImageButton
-    private lateinit var btnRewind: ImageButton
-    private lateinit var tvSongName: TextView
-    private var mediaPlayer: MediaPlayer? = null
-    private var songUriList: MutableList<Uri> = mutableListOf()
-    private var currentSongIndex: Int = -1
-    private val REQUEST_CODE_SELECT_SONG = 1
-    private val REQUEST_CODE_PERMISSION = 2
+    private lateinit var songDatabase: SongDatabase
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_musicainicio)
-        requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+
+        songDatabase = SongDatabase(this)
+
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), 1)
+        } else {
+            scanAndAddSongs()
         }
 
-        btnSelectSong = findViewById(R.id.btnSelectSong)
-        btnPlayPause = findViewById(R.id.btnPlayPause)
-        btnFastForward = findViewById(R.id.btnFastForward)
-        btnRewind = findViewById(R.id.btnRewind)
-        tvSongName = findViewById(R.id.tvSongName)
-
-        btnSelectSong.setOnClickListener {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE), REQUEST_CODE_PERMISSION)
-            } else {
-                selectSongs()
-            }
-        }
-
-        btnPlayPause.setOnClickListener {
-            if (mediaPlayer?.isPlaying == true) {
-                mediaPlayer?.pause()
-                btnPlayPause.setImageResource(R.drawable.continuar)
-            } else {
-                mediaPlayer?.start()
-                btnPlayPause.setImageResource(R.drawable.pause)
-            }
-        }
-
-        btnFastForward.setOnClickListener {
-            if (songUriList.isNotEmpty()) {
-                currentSongIndex = (currentSongIndex + 1) % songUriList.size
-                playSong(currentSongIndex)
-            }
-        }
-
-        btnRewind.setOnClickListener {
-            if (songUriList.isNotEmpty()) {
-                currentSongIndex = if (currentSongIndex > 0) currentSongIndex - 1 else songUriList.size - 1
-                playSong(currentSongIndex)
-            }
-        }
-    }
-
-    private fun selectSongs() {
-        val intent = Intent(Intent.ACTION_PICK, android.provider.MediaStore.Audio.Media.EXTERNAL_CONTENT_URI)
-        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        startActivityForResult(intent, REQUEST_CODE_SELECT_SONG)
-    }
-
-    private fun playSong(index: Int) {
-        mediaPlayer?.release()
-        songUriList.getOrNull(index)?.let { uri ->
-            mediaPlayer = MediaPlayer.create(this, uri)
-            mediaPlayer?.start()
-            tvSongName.text = uri.lastPathSegment
-            btnPlayPause.setImageResource(R.drawable.pause)
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == REQUEST_CODE_SELECT_SONG && resultCode == Activity.RESULT_OK) {
-            songUriList.clear()
-            data?.clipData?.let { clipData ->
-                for (i in 0 until clipData.itemCount) {
-                    songUriList.add(clipData.getItemAt(i).uri)
-                }
-            } ?: data?.data?.let { uri ->
-                songUriList.add(uri)
-            }
-            if (songUriList.isNotEmpty()) {
-                currentSongIndex = 0
-                playSong(currentSongIndex)
-            }
-        }
+        // Cargar el fragmento de la lista de canciones al iniciar la actividad
+        openFragment(SongListFragment())
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == REQUEST_CODE_PERMISSION && grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-            selectSongs()
+        if (requestCode == 1) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                scanAndAddSongs()
+            } else {
+                Toast.makeText(this, "El permiso es necesario para acceder a las canciones.", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        mediaPlayer?.release()
+    private fun scanAndAddSongs() {
+        Thread {
+            val contentResolver: ContentResolver = contentResolver
+            val uri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
+            val projection = arrayOf(
+                MediaStore.Audio.Media._ID,
+                MediaStore.Audio.Media.TITLE,
+                MediaStore.Audio.Media.ARTIST,
+                MediaStore.Audio.Media.DATA,
+                MediaStore.Audio.Media.DATE_ADDED
+            )
+
+            val cursor: Cursor? = contentResolver.query(uri, projection, null, null, null)
+
+            cursor?.use {
+                if (it.moveToFirst()) {
+                    do {
+                        val idIndex = it.getColumnIndex(MediaStore.Audio.Media._ID)
+                        val titleIndex = it.getColumnIndex(MediaStore.Audio.Media.TITLE)
+                        val artistIndex = it.getColumnIndex(MediaStore.Audio.Media.ARTIST)
+                        val dataIndex = it.getColumnIndex(MediaStore.Audio.Media.DATA)
+                        val dateAddedIndex = it.getColumnIndex(MediaStore.Audio.Media.DATE_ADDED)
+
+                        if (idIndex != -1 && titleIndex != -1 && artistIndex != -1 && dataIndex != -1 && dateAddedIndex != -1) {
+                            val id = it.getLong(idIndex)
+                            val title = it.getString(titleIndex)
+                            val artist = it.getString(artistIndex)
+                            val data = it.getString(dataIndex)
+                            val dateAdded = it.getLong(dateAddedIndex)
+
+                            val song = Song(id, title, artist, data, dateAdded)
+                            songDatabase.addSong(song)
+
+                            Log.d("Musicainicio", "Added song to database: $song")
+                        }
+                    } while (it.moveToNext())
+                }
+                notifyFragmentSongsUpdated()
+            }
+        }.start()
     }
+
+    private fun notifyFragmentSongsUpdated() {
+        val intent = Intent("SONGS_UPDATED")
+        sendBroadcast(intent)
+    }
+
+    private fun openFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit()
+    }
+    private fun onSongSelected(song: Song) {
+        val intent = Intent(this, MusicInicioIn::class.java).apply {
+            putExtra("SONG_ID", song.id)
+            putExtra("SONG_TITLE", song.title)
+            putExtra("SONG_DATA", song.data)
+            // Puedes pasar más detalles si es necesario
+        }
+        startActivity(intent)
+    }
+
 }

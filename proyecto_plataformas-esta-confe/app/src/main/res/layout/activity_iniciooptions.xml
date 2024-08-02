@@ -17,7 +17,8 @@
             android:layout_width="0dp"
             android:layout_height="0dp"
             app:layout_constraintHeight_default="wrap"
-            app:layout_constraintWidth_default="wrap">
+            app:layout_constraintWidth_default="wrap"
+            tools:ignore="MissingConstraints">
 
             <com.google.android.material.imageview.ShapeableImageView
                 android:id="@+id/main_image"
@@ -25,10 +26,21 @@
                 android:layout_height="250dp"
                 android:layout_alignParentEnd="true"
                 android:layout_marginTop="40dp"
-                android:layout_marginEnd="16dp"
+                android:layout_marginEnd="198dp"
                 android:src="@drawable/main_image_perfil"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:shapeAppearanceOverlay="@style/OvalImageShape" />
+
+            <ImageView
+                android:id="@+id/menu_icon"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:layout_marginStart="332dp"
+                android:layout_marginTop="59dp"
+                android:background="@drawable/desplegableinicio"
+                android:contentDescription="Menu"
+                android:onClick="openDrawer" />
         </RelativeLayout>
 
         <Button
@@ -74,23 +86,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             android:layout_marginTop="16dp"/>
 
-        <ImageView
-            android:id="@+id/menu_icon"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="46dp"
-            android:background="@drawable/desplegableinicio"
-            android:contentDescription="Menu"
-            android:onClick="openDrawer"
-            app:layout_constraintStart_toStartOf="@+id/relativeLayout"
-            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
+        android:layout_gravity="end"
         app:menu="@menu/drawer_menu" >
 
         <Switch
